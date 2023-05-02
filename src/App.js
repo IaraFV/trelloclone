@@ -1,6 +1,10 @@
 import { useState } from "react";
 import "./App.css";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { Box, Paper, Typography } from "@mui/material";
+import NavBar from "./components/NavBar";
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
 
 const inicialItems = [
   { id: "1", content: "Conteudo 1" },
@@ -71,11 +75,7 @@ function App() {
       columnsCopy[sourceColumnId].items = filteredSourceColumnItems;
       setColumns(columnsCopy);
     } else {
-      destinationColumnItems.splice(
-        result.destination.index,
-        0,
-        draggedItem
-      );
+      destinationColumnItems.splice(result.destination.index, 0, draggedItem);
       var columnsCopy = JSON.parse(JSON.stringify(columns));
       columnsCopy[sourceColumnId].items = filteredSourceColumnItems;
       columnsCopy[destinationColumnId].items = destinationColumnItems;
@@ -84,62 +84,85 @@ function App() {
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center" }}>
-      <DragDropContext onDragEnd={onDragEnd}>
-        {columns.map((column) => (
-          <>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <h1>{column.name}</h1>
-              <Droppable droppableId={column.id} key={column.id}>
-                {(provided) => (
-                  <div
-                    ref={provided.innerRef}
-                    style={{
-                      backgroundColor: "lightblue",
-                      width: 250,
-                      height: 500,
-                      padding: 10,
-                      margin: 10,
-                    }}
-                  >
-                    {column.items.map((item, index) => (
-                      <Draggable
-                        draggableId={item.id}
-                        index={index}
-                        key={item.id}
-                      >
-                        {(provided) => (
-                          <div
-                            {...provided.dragHandleProps}
-                            {...provided.draggableProps}
-                            ref={provided.innerRef}
-                            style={{
-                              backgroundColor: "gray",
-                              height: 40,
-                              marginBottom: 10,
-                              ...provided.draggableProps.style,
-                            }}
+    <Box
+      style={{
+        backgroundImage:
+          "radial-gradient(circle, #130639, #261258, #3d1b78, #572399, #742aba)",
+      }}
+    >
+      <NavBar />
+      <Box
+        display="flex"
+        justifyContent="center"
+        height="100vh"
+        margin="none"
+        padding="0"
+      >
+        <DragDropContext onDragEnd={onDragEnd}>
+          {columns.map((column) => (
+            <>
+              <Box
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <Droppable droppableId={column.id} key={column.id}>
+                  {(provided) => (
+                    <Box
+                      style={{
+                        backgroundColor: "#ebebf1",
+                        width: 300,
+                        height: "fit-content",
+                        padding: 10,
+                        margin: 10,
+                      }}
+                    >
+                      <Typography variant="h4">{column.name}</Typography>
+                      <Box ref={provided.innerRef} width="100%" height="100%">
+                        {column.items.map((item, index) => (
+                          <Draggable
+                            draggableId={item.id}
+                            index={index}
+                            key={item.id}
                           >
-                            {item.content}
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </div>
-          </>
-        ))}
-      </DragDropContext>
-    </div>
+                            {(provided) => (
+                              <Paper
+                                elevation={2}
+                                {...provided.dragHandleProps}
+                                {...provided.draggableProps}
+                                ref={provided.innerRef}
+                                style={{
+                                  padding: 5,
+                                  height: 40,
+                                  marginTop: 10,
+                                  ...provided.draggableProps.style,
+                                }}
+                              >
+                                {item.content}
+                              </Paper>
+                            )}
+                          </Draggable>
+                        ))}
+                        <Button
+                          style={{ marginTop: "10px", color: "#959dab" }}
+                          size="large"
+                          startIcon={<AddIcon />}
+                        >
+                          Card
+                        </Button>
+                      </Box>
+                      {provided.placeholder}
+                    </Box>
+                  )}
+                </Droppable>
+              </Box>
+            </>
+          ))}
+        </DragDropContext>
+      </Box>
+    </Box>
   );
 }
 
