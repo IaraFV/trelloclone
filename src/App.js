@@ -18,14 +18,37 @@ const inicialColumns = [
     id: "456",
     items: [],
   },
+  {
+    name: "Test",
+    id: "789",
+    items: [],
+  },
+  {
+    name: "Done",
+    id: "101112",
+    items: [],
+  },
 ];
 
 function App() {
   const [columns, setColumns] = useState(inicialColumns);
 
   const onDragEnd = (result) => {
-    var sourceColumnItems = columns[0].items;
+    var sourceColumnItems = [];
     var draggedItem = {};
+    var destinationColumnItems = [];
+    var sourceColumnId = 0;
+    var destinationColumnId = 0;
+
+    for (var i in columns) {
+      if (columns[i].id === result.source.droppableId) {
+        sourceColumnItems = columns[i].items;
+        sourceColumnId = i;
+      } else if (columns[i].id === result.destination.droppableId) {
+        destinationColumnItems = columns[i].items;
+        destinationColumnId = i;
+      }
+    }
 
     for (var i in sourceColumnItems) {
       if (sourceColumnItems[i].id === result.draggableId) {
@@ -36,12 +59,28 @@ function App() {
     var filteredSourceColumnItems = sourceColumnItems.filter(
       (item) => item.id !== result.draggableId
     );
-    
-    filteredSourceColumnItems.splice(result.destination.index, 0, draggedItem);
 
-    var columnsCopy = JSON.parse(JSON.stringify(columns));
-    columnsCopy[0].items = filteredSourceColumnItems;
-    setColumns(columnsCopy);
+    if (result.source.droppableId === result.destination.droppableId) {
+      filteredSourceColumnItems.splice(
+        result.destination.index,
+        0,
+        draggedItem
+      );
+
+      var columnsCopy = JSON.parse(JSON.stringify(columns));
+      columnsCopy[sourceColumnId].items = filteredSourceColumnItems;
+      setColumns(columnsCopy);
+    } else {
+      destinationColumnItems.splice(
+        result.destination.index,
+        0,
+        draggedItem
+      );
+      var columnsCopy = JSON.parse(JSON.stringify(columns));
+      columnsCopy[sourceColumnId].items = filteredSourceColumnItems;
+      columnsCopy[destinationColumnId].items = destinationColumnItems;
+      setColumns(columnsCopy);
+    }
   };
 
   return (
